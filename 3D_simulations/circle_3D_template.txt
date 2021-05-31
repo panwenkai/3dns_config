@@ -1,0 +1,80 @@
+//____________________________________________________________
+// 3DNS - Numerical Simulation v3.4
+// J.P. Leonard, A.B. Limanov, J.S. Im
+// Program in Materials Science and Engineering
+// Columbia University, New York, NY  10027
+//
+// COPYRIGHT(C) 1994-99. All Rights Reserved.
+//
+// Simulation   #001
+// Melt threshold calculations 
+//____________________________________________________________
+
+//_______ Simulation modes _____________
+TIME_ERA    			FLOAT 	{50e-9, 50e-9}	// run time(s) for each simulation era (seconds)
+TIME_STEP_LO			FLOAT 	{1e-15, 1e-15}  	// recommended timestep
+TIME_STEP_HI			FLOAT 	{1e-12, 1e-12}	// maximum allowed timestep
+INTERFACE_MOTION_LO		FLOAT	{0.05, 0.05}  	// recommended interface change per clock
+INTERFACE_MOTION_HI		FLOAT	{0.10, 0.10}	// maximum allowed interface change per clock
+TEMPERATURE_CHANGE_LO	FLOAT 	{0.5, 0.5}		// recommended temperature change per clock
+TEMPERATURE_CHANGE_HI	FLOAT 	{1.5, 15}	// maximum allowed temperature change per clock
+MODE_RADIATION		BOOL 	true		// set to true for radiation from top surface
+MODE_STOCHASTIC		BOOL	true 		// set to true for stochastic nucleation
+MODE_RESOLIDIFY_STOP	BOOL	true		// set to true for simulation end when full resolidification occurs
+SEED_STOCHASTIC		INT	all    		// set to positive integer or 'all' for randomized seed
+PERIODIC_IJK            BOOL    {false, false, false}
+SURFACE_SPEED           FLOAT  1.0
+INTERFACE_SPEED         FLOAT  1.0
+INTERFACE_SUPERHEATING  FLOAT  200.0
+
+//_______ Geometry _____________
+NODES_I  		INT	{120}		// nodes (nm): 5			// number of nodes in each I_REGION
+NODES_J  		INT	{10, 5, 5, 5}	// nodes (nm): 5, 5, 100, 1000, 10um	// number of nodes in each J_REGION
+NODES_K		        INT	{120}		// nodes (nm): 5			// number of nodes in each K_REGION
+SIZE_I  		FLOAT	{300e-9}						// width of each I_REGION (meters)
+SIZE_J  		FLOAT	{50e-9, 300e-9, 3e-6, 30e-6}			// height of each J_REGION (meters)
+SIZE_K			FLOAT 	{300e-9}						// depth of each K_REGION (meters)
+TEMP_SUBSTRATE 	INT	300						// constant or a filename (.temp) and time to read from (Kelvin) 
+
+//_______ Phase information ____________
+LAYER_CATALYZE_FREEZING 	BOOLEAN	{false, false, false, false}		// allows catalytic nucleation effects at Si/SiO2 interface.
+LAYER_CATALYZE_MELTING 	        BOOLEAN	{true, false, false, false}		// allows for superheating of a solid, solid will melt only when liquid interface contacts it, thus preserving an experimentally observed sharp interface
+LAYER_CAN_CHANGE        	BOOLEAN	{true, false, false, false}		// allows particular material layer to change phase
+LAYER_HET_THRESHOLD 		FLOAT		{infinity, infinity, infinity, infinity}		// 0 highest degree of allowance for nucleation in particular material layer
+LAYER_HOM_THRESHOLD 	        FLOAT		{infinity, infinity, infinity, infinity}	
+LAYER_HET_THRESHOLD_LIQUID      FLOAT	{infinity, infinity, infinity, infinity}	//#/m2
+LAYER_HOM_THRESHOLD_LIQUID      FLOAT	{infinity, infinity, infinity, infinity}		//#/m3
+LAYER_HET_THRESHOLD_LIQUID_SURFACE   FLOAT	{infinity, infinity, infinity, infinity}		//#/m3	// infinity lowest degree of allowance for nucleation in particular material layer
+LAYER_MATERIALS     		FILE		{Silicon2016_308.mat, OxideFlat.mat, OxideFlat.mat, OxideFlat.mat}	// .mat files (library) opened with Notepad software show modeling function in reverse polish notation (see Instructions.doc) 
+LAYER_PHASE_START		WORD		{"Crystal", "Solid", "Solid", "Solid"}	// starting phase mode for each material
+LAYER_GRAIN_INDEX       INT     {0, 0, 0, 0}
+LAYER_LAYER_INDEX       INT     {0, 0, 0, 0}
+LAYER_IS_INTERFACE      BOOLEAN {false, false, false, false}
+LAYER_IS_SURFACE        BOOLEAN {false, false, false, false}
+
+//_______ Laser parameters _______________
+LASER_WAVELENGTH  	FLOAT	308e-9			// used for thin film effects (meters)
+ENERGY_DENSITY    	FLOAT   0.46			// total energy under the laser pulse temporal profile (J/cm2)
+LASER_TEMPORAL   	FILE 	"LP_30ns_triple.dat"	// temporal waveform (function or file)
+LASER_SPATIAL_X   	FLOAT	1.0			// spatial waveform (function or file) or BARRIER
+LASER_SPATIAL_Z   	FLOAT	1.0			// spatial waveform (function or file) or BARRIER
+
+//_______ Reporting parameters _____________
+REPORT_INTERVAL 		FLOAT		1e-10 1e-9		// reporting interval(s) for each era (seconds)
+REPORT_HISTORY		        BOOLEAN	true		// node histories specified by WATCH_PHASE options below
+REPORT_INTERFACE        	BOOLEAN	false		// interface node histories
+REPORT_NUCLEATION 		BOOLEAN	false		// nucleation probabilities
+REPORT_TEMPERATURE   	        BOOLEAN	true		// node temperatures specified by WATCH_TEMPERATURE options below
+WATCH_TEMPERATURE_I  		INT		{0..119}		// i-nodes to report temperatures
+WATCH_TEMPERATURE_J 		INT		{0..9} 		// j-nodes to report temperatures
+WATCH_TEMPERATURE_K		INT		{0..119}		// k-nodes to report temperatures
+WATCH_PHASE_I           	INT  		{0..119} 		// i-nodes to report nucleation and history
+WATCH_PHASE_J           	INT		{0..9} 		// j-nodes to report nucleation and history
+WATCH_PHASE_K		        INT		{0..119}		// k-nodes to report nucleation and history
+WATCH_INTERFACE_I     		INT		{0..119}		// i-nodes to report temperatures
+WATCH_INTERFACE_J     		INT		{0..9} 		// j-nodes to report temperatures
+WATCH_INTERFACE_K		INT		{0..119}		// k-nodes to report temperatures
+
+//_______ Diagnostic Reporting parameters _____________
+REPORT_LASER             	BOOLEAN	false		// diagnostic laser file
+REPORT_PROPERTIES        	BOOLEAN	false		// diagnostic thermophysical properties file

@@ -1,0 +1,483 @@
+//____________________________________________________________
+// 3DNS - Numerical Simulation v3.4
+// J.P. Leonard, A.B. Limanov, J.S. Im
+// Program in Materials Science and Solid State Technology
+// Columbia University, New York, NY  10027
+//
+// COPYRIGHT(C) 1994-99. All Rights Reserved.
+//
+// Silicon material file
+//____________________________________________________________
+// Updated from Silicon.mat in 3dns_V3.8 (Paul, July 2005):
+// 
+// 1. Updated liquid Si and crystal Si values for n and k using JPL's 'new' OpticalIndex function in mathematica
+//
+// 2. Melting temperature a-Si changed to 1460
+//
+// 3. (Aug.'05) Changed N_INDEX function for crystal Si to RPN to force N within allowed range (0-10) for entire T range (up to 4000dC)
+//____________________________________________________________
+// Updated from Silicon2005_3082.mat in 3dns (Vernon, Aug 2016):
+// 
+// 1. Activate linear IRF
+//
+// 2. Cleaned up the file
+//	-removed composite Crystal IRF function
+//	-closed equations with missing " "
+//	-removed INDEX_N and INDEX_K for 251 wavelength
+//
+// 3. Set melting point of linear amorphous IRF to 1460
+//
+// 4. Add identical crystal file and label "Crystal2" and so on for multi-crystal experiments
+//
+// 5. Add identical crystal files and label "GB" except with zero enthalpy
+//
+// 6. Add identical crystal files and label "GB_lo" and "GB_hi" except with zero enthalpy and lower and higher melting points
+//____________________________________________________________
+MATERIAL_CLASS_NAME	WORD	"Silicon"
+
+//________ Liquid Silicon ____________________
+PHASE 	BEGIN
+PHASE_NAME			WORD	"Liquid"
+TRANSITION_TEMP		INT	{1685, 1675, 1680, 1695, 1690, 1685, 1685,1685, 1685, 1685, 1685, 1685, 1460, 1685, 1685, 1675, 1665, 1655, 1645, 1635, 1625}						// during solidification
+TRANSITION_TO			WORD 	{"Crystal", "Crystal_low_10", "Crystal_low_5", "Crystal_high_10", "Crystal_high_5", "Crystal_IR", "Crystal1", "Crystal2", "Crystal3","Crystal4","Crystal5","GB", "Amorphous", "GB_lo", "GB_hi", "Crystal_10", "Crystal_20", "Crystal_30", "Crystal_40", "Crystal_50", "Crystal_60"}
+HEAT_CAPACITY 			RPN	"0.7001928 -1493.562 T + 1.9912816E-2 * EXP 1 + / 2.1107997 +"   // [J/(cm3 K)]
+#THERMAL_CONDUCTIVITY	FLOAT	 0.516							// Glazov/Jellison/Thompson [W/(cm K)]
+THERMAL_CONDUCTIVITY		RPN	"T 5.49206E-4 * 0.409413 - T 1340.5 - U * 1340.5 T - U 0.325 * +"  	// [W/(cm K)]
+INDEX_N				FLOAT 	1.58692							// 308nm; July 2005
+INDEX_K				FLOAT	3.63038							// 308nm; July 2005
+EMISSIVITY 			FLOAT	0.6
+PHASE	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_low_10"
+TRANSITION_TEMP 	INT		1675											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1675 T - 0.072023 * 1675 T - U * T 1675 - 0.25 * T 1675 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_low_5"
+TRANSITION_TEMP 	INT		1675											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1680 T - 0.072023 * 1680 T - U * T 1680 - 0.25 * T 1680 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_high_10"
+TRANSITION_TEMP 	INT		1695											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1695 T - 0.072023 * 1695 T - U * T 1695 - 0.25 * T 1695 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_high_5"
+TRANSITION_TEMP 	INT		1695											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1690 T - 0.072023 * 1690 T - U * T 1690 - 0.25 * T 1690 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_IR"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	FLOAT		3.6						// 308nm July 2005
+INDEX_K			FLOAT 		0.0    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon 1 ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal1"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+
+//_________ Crystal Silicon 2 ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal2"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon 3 ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal3"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon 4 ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal4"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon 5 ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal5"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Grain Boundary Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"GB"
+TRANSITION_TEMP 	INT		1685											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		FLOAT		0
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Amorphous Silicon ________________
+PHASE 	BEGIN
+PHASE_NAME		WORD		"Amorphous"
+TRANSITION_TEMP	INT		1460													// temperature for melting and nucleation
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		FLOAT		2990.0													// [J/cm3]
+HEAT_CAPACITY		POLYNOMIAL	1  0.376652  0.00130783											// [J/(cm3 K)]
+//INTERFACE_RESPONSE	RPN 		"-14333.2 T 2.92659 - / EXP -2.44258E6 * -7813.98 T 2.92659 - / EXP 2.69964E4 * + 1450 T - U * T 1450 - U -0.299184 * +"	// AMORPHOUS exponential [m/sec]
+INTERFACE_RESPONSE	RPN		"1460 T - 0.0720323 * 1460 T - U * T 1460 - 0.299184 * T 1460 - U * -"						// linear 0.072*(1460-T)<1460>0.299*(1460-T)
+THERMAL_CONDUCTIVITY	FLOAT		0.015
+INDEX_N			FLOAT		2.82757 													// 308nm see 'Material.nb'
+INDEX_K			FLOAT		3.06062													// 308nm see 'Material.nb'
+NUCLEATION_HET	FLOAT 		0.0													// need to fix this
+NUCLEATION_HOM	FLOAT 		0.0													// need to fix this
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY		FLOAT 		0.5													// need to fix this
+PHASE 	END
+
+//_________ GB with low melting T________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"GB_lo"
+TRANSITION_TEMP 	INT		1675											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		FLOAT		0
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ GB with high melting T________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"GB_hi"
+TRANSITION_TEMP 	INT		1695											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		FLOAT		0
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1685 T - 0.072023 * 1685 T - U * T 1685 - 0.25 * T 1685 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	RPN 		"3.94572E29 T * -1.49065 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	RPN 		"2.23767E39 T * -4.47768 T 2 ^ * 1685.001 T - 2 ^ / -12632.2 T / + EXP * 1685 T - U *"  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_10"
+TRANSITION_TEMP 	INT		1675											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1675 T - 0.072023 * 1675 T - U * T 1675 - 0.25 * T 1675 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	FLOAT 		0  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	FLOAT 		0  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_20"
+TRANSITION_TEMP 	INT		1665											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1665 T - 0.072023 * 1665 T - U * T 1665 - 0.25 * T 1665 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	FLOAT 		0  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	FLOAT 		0  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_30"
+TRANSITION_TEMP 	INT		1655											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1665 T - 0.072023 * 1655 T - U * T 1655 - 0.25 * T 1655 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	FLOAT 		0  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	FLOAT 		0  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_40"
+TRANSITION_TEMP 	INT		1645											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1645 T - 0.072023 * 1645 T - U * T 1645 - 0.25 * T 1645 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	FLOAT 		0  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	FLOAT 		0  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_50"
+TRANSITION_TEMP 	INT		1635											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1635 T - 0.072023 * 1635 T - U * T 1635 - 0.25 * T 1635 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	FLOAT 		0  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	FLOAT 		0  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END
+
+//_________ Crystal Silicon ________________
+PHASE	BEGIN
+PHASE_NAME		WORD		"Crystal_60"
+TRANSITION_TEMP 	INT		1625											// equilibrium temperature must be integer
+TRANSITION_TO		WORD		"Liquid"
+ENTHALPY		RPN		"T 3 ^ -2.8978E-7 * T 2 ^ 5.61856E-4 * + T 0.363669 * + 3308.31 + 3000 T - U * T 3000 - U 1634.0 * +"
+HEAT_CAPACITY		RPN		"T -3 ^ -6.368602E6 * T 3.300391E-4 * + 1.7990797 + T 152 - U * 152 T - U .04 * +"  			// [J/(cm3K)]
+INTERFACE_RESPONSE 	RPN 		"1625 T - 0.072023 * 1625 T - U * T 1625 - 0.25 * T 1625 - U * -" 					// linear [m/sec] 0.072*(1685-T)<1685>0.25*(1685-T)
+//INTERFACE_RESPONSE	RPN 		"-1.41183E4 T / EXP -4.02142E5 * -8877.3 T / EXP 1.8E4 * + 1685 T - U * T 1685 - U 0.25 * 1685 T - * +"  	// CRYSTAL exponential [m/sec]
+THERMAL_CONDUCTIVITY 	RPN 		"-3.539984 T * 1660.8406 + T 1.1835176 ^ / 0.85870054 +"   					// [W/(cm K)]
+INDEX_N                	RPN		"1 T 3000 - U * 5.588246 -14.234E-4 T * + 3000 T - U * +"						// 308nm July 2005
+INDEX_K			POLYNOMIAL 	"1 3.5240533 8.818E-4"    									// 308nm July 2005
+NUCLEATION_HET	FLOAT 		0  			// THETA=76.9219DEG  SIG=0.4724T/Tm I0(T) [1/(m2 sec)] SEE RA P.895 
+NUCLEATION_HOM	FLOAT 		0  			// SIG=0.4724T/Tm I0(T) [1/(m3 sec)]  SEE RA P.895
+NUCLEATION_HET_LIQUID FLOAT 0
+NUCLEATION_HOM_LIQUID FLOAT 0
+NUCLEATION_HET_LIQUID_SURFACE 0
+
+EMISSIVITY 		FLOAT 		0.6
+PHASE 	END

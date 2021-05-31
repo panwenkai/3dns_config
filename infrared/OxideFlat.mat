@@ -1,0 +1,23 @@
+//____________________________________________________________
+// 2DPC - Numerical Simulation v3.0
+// J.P. Leonard, A.B. Limanov, J.S. Im
+// Program in Materials Science and Solid State Technology
+// Columbia University, New York, NY  10027
+//
+// COPYRIGHT(C) 1994-99. All Rights Reserved.
+//
+// Silicon Dioxide material file	v3.0	7-16-99
+// flat thermal conductivity
+//____________________________________________________________
+MATERIAL_CLASS_NAME	WORD	"SiO2"
+
+//________ Silicon Dioxide ____________________
+PHASE			BEGIN
+PHASE_NAME		WORD		"Solid"
+//THERMAL_CONDUCTIVITY 	POLYNOMIAL 	"3  1.7911869E-3  6.6544326E-5  -1.225815E-7  1.0133453E-10"  //[W/(cm K)]
+THERMAL_CONDUCTIVITY	FLOAT		0.0134582
+HEAT_CAPACITY		RPN 		"-1.0032304E5 T 2 ^ / 4.984966E-4 T * + 2.7516154 + T 191.5 - U * 191.5 T - U 0.125 * +"
+INDEX_N			FLOAT 		1.49164  #308nm
+INDEX_K			FLOAT		0.0
+EMISSIVITY 		INT		0
+PHASE			END

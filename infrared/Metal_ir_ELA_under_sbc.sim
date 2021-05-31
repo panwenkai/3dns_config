@@ -1,0 +1,105 @@
+//____________________________________________________________
+// 3DNS - Numerical Simulation v3.4
+// J.P. Leonard, A.B. Limanov, J.S. Im
+// Program in Materials Science and Engineering
+// Columbia University, New York, NY  10027
+//
+// COPYRIGHT(C) 1994-99. All Rights Reserved.
+//
+// Simulation   #001
+// Melt threshold calculations 
+//____________________________________________________________
+
+//_______ Simulation modes _____________
+TIME_ERA    			FLOAT 	{300e-9}	// run time(s) for each simulation era (seconds)
+TIME_STEP_LO			FLOAT 	{5e-14}  	// recommended timestep
+TIME_STEP_HI			FLOAT 	{5e-12}	// maximum allowed timestep
+INTERFACE_MOTION_LO		FLOAT	{0.05}  	// recommended interface change per clock
+INTERFACE_MOTION_HI		FLOAT	{0.70}	// maximum allowed interface change per clock
+TEMPERATURE_CHANGE_LO	FLOAT 	{1}		// recommended temperature change per clock
+TEMPERATURE_CHANGE_HI	FLOAT 	{20}	// maximum allowed temperature change per clock
+MODE_RADIATION		BOOL 	true		// set to true for radiation from top surface
+MODE_STOCHASTIC		BOOL	true 		// set to true for stochastic nucleation
+MODE_RESOLIDIFY_STOP	BOOL	false		// set to true for simulation end when full resolidification occurs
+SEED_STOCHASTIC		INT	all    		// set to positive integer or 'all' for randomized seed
+PERIODIC_IJK            BOOL    {false, false, false}
+SURFACE_SPEED           FLOAT  1.0
+INTERFACE_SPEED         FLOAT  1.0
+INTERFACE_SUPERHEATING  FLOAT  200.0
+
+//_______ Geometry _____________
+NODES_I  		INT	{300}		// nodes (nm): 5			// number of nodes in each I_REGION
+NODES_J  		INT	{5, 25, 5, 10, 20, 20, 20}	// nodes (nm): 5, 5, 100, 1000, 10um	// number of nodes in each J_REGION
+NODES_K		        INT	{1}		// nodes (nm): 1			// number of nodes in each K_REGION
+SIZE_I  		FLOAT	{600e-9}						// width of each I_REGION (meters)
+SIZE_J  		FLOAT	{5e-9, 50e-9, 5e-9, 20e-9, 300e-9, 3e-6, 30e-6}			// height of each J_REGION (meters)
+SIZE_K			FLOAT 	{5e-9}						// depth of each K_REGION (meters)
+TEMP_SUBSTRATE 	        INT	300						// constant or a filename (.temp) and time to read from (Kelvin) 
+
+//_______ Phase information ____________
+LAYER_CATALYZE_FREEZING 	BOOLEAN	{false, false, false, false, false, false, false}		// allows catalytic nucleation effects at Si/SiO2 interface.
+LAYER_CATALYZE_MELTING 	        BOOLEAN	{false, false, false, false, false, false, false}		// allows for superheating of a solid, solid will melt only when liquid interface contacts it, thus preserving an experimentally observed sharp interface
+LAYER_CAN_CHANGE        	BOOLEAN	{false, true,  false, false, false, false, false}		// allows particular material layer to change phase
+LAYER_HET_THRESHOLD 		FLOAT		{infinity, infinity, infinity, infinity, infinity, infinity, infinity}		// 0 highest degree of allowance for nucleation in particular material layer
+LAYER_HOM_THRESHOLD 	        FLOAT		{infinity, infinity, infinity, infinity, infinity, infinity, infinity}	
+LAYER_HET_THRESHOLD_LIQUID      FLOAT	{infinity, infinity, infinity, infinity, infinity, infinity, infinity}	//#/m2
+LAYER_HOM_THRESHOLD_LIQUID      FLOAT	{infinity, infinity, infinity, infinity, infinity, infinity, infinity}		//#/m3
+LAYER_HET_THRESHOLD_LIQUID_SURFACE   FLOAT	{infinity, infinity, infinity, infinity, infinity, infinity, infinity}		//#/m3	// infinity lowest degree of allowance for nucleation in particular material layer
+LAYER_MATERIALS     		FILE		{OxideFlat.mat, Silicon2016_308.mat, OxideFlat.mat, Aluminum.mat, OxideFlat.mat, OxideFlat.mat, OxideFlat.mat}	// .mat files (library) opened with Notepad software show modeling function in reverse polish notation (see Instructions.doc) 
+LAYER_PHASE_START		WORD		{"Solid", "Crystal_IR", "Solid", "Crystal", "Solid", "Solid", "Solid"}	// starting phase mode for each material
+LAYER_GRAIN_INDEX       INT     {0, 0, 0, 0, 0, 0, 0}
+LAYER_LAYER_INDEX       INT     {0, 0, 0, 0, 0, 0, 0} 
+LAYER_IS_INTERFACE      BOOLEAN {false, false, false, false, false, false, false}
+LAYER_IS_SURFACE        BOOLEAN {false, false, false, false, false, false, false}
+
+//_______ Laser parameters _______________
+LASER_WAVELENGTH  	FLOAT	1000e-9			// used for thin film effects (meters)
+ENERGY_DENSITY    	FLOAT   	0.4			// total energy under the laser pulse temporal profile (J/cm2)
+LASER_TEMPORAL   	FILE 	"sbc.dat"	// temporal waveform (function or file)  "FWHM_20_freq_300.0_ss5.0_pd1_z249_own.txt"
+LASER_SPATIAL_X   	FLOAT	1.0			// spatial waveform (function or file) or BARRIER
+LASER_SPATIAL_Z   	FLOAT	1.0			// spatial waveform (function or file) or BARRIER
+LASER_VELOCITY_X        FLOAT   0.0
+LASER_VELOCITY_Z        FLOAT   0.0
+
+//_______ Reporting parameters _____________
+REPORT_INTERVAL 		FLOAT		{2e-10}		// reporting interval(s) for each era (seconds)
+REPORT_HISTORY		BOOLEAN	true		// node histories specified by WATCH_PHASE options below
+REPORT_INTERFACE        		BOOLEAN	true		// interface node histories
+REPORT_NUCLEATION 		BOOLEAN	false		// nucleation probabilities
+REPORT_TEMPERATURE   	BOOLEAN	true		// node temperatures specified by WATCH_TEMPERATURE options below
+WATCH_TEMPERATURE_I  		INT		{0..299}		// i-nodes to report temperatures
+WATCH_TEMPERATURE_J 		INT		{5..29} 		// j-nodes to report temperatures
+WATCH_TEMPERATURE_K		INT		{0}		// k-nodes to report temperatures
+WATCH_PHASE_I           		INT  		{0..299} 		// i-nodes to report nucleation and history
+WATCH_PHASE_J           		INT		{5..29} 		// j-nodes to report nucleation and history
+WATCH_PHASE_K		INT		{0}		// k-nodes to report nucleation and history
+WATCH_INTERFACE_I     		INT		{0..299}		// i-nodes to report temperatures
+WATCH_INTERFACE_J     		INT		{5..29} 		// j-nodes to report temperatures
+WATCH_INTERFACE_K		INT		{0}		// k-nodes to report temperatures
+
+//_______ Diagnostic Reporting parameters _____________
+REPORT_LASER             	BOOLEAN	true		// diagnostic laser file
+REPORT_PROPERTIES        	BOOLEAN	false		// diagnostic thermophysical properties file
+
+//_______ Overlay Geometry ____________
+OVERLAY BEGIN							// second ELA grain
+OVERLAY_CAN_CHANGE		BOOLEAN	true
+OVERLAY_CATALYZE_FREEZING	BOOLEAN	false
+OVERLAY_CATALYZE_MELTING	BOOLEAN	false
+OVERLAY_HET_THRESHOLD		FLOAT	0
+OVERLAY_HOM_THRESHOLD		FLOAT	0
+OVERLAY_HET_THRESHOLD_LIQUID    FLOAT	{infinity}	//#/m2
+OVERLAY_HOM_THRESHOLD_LIQUID    FLOAT	{infinity}		//#/m3
+OVERLAY_HET_THRESHOLD_LIQUID_SURFACE   FLOAT	{infinity}		//#/m3
+OVERLAY_LOCATIONS_I		INT		{75..224}
+OVERLAY_LOCATIONS_J		INT		{5..29}
+OVERLAY_LOCATIONS_K		INT		{0}
+OVERLAY_MATERIAL		FILE		{Silicon2016_308.mat}
+OVERLAY_PHASE_START	WORD			{"Crystal_IR"}
+OVERLAY_IS_SURFACE      BOOLEAN  false
+OVERLAY_IS_INTERFACE    BOOLEAN  false
+OVERLAY_GRAIN_INDEX     INT {1}
+OVERLAY_LAYER_INDEX     INT {0}
+
+OVERLAY END
+

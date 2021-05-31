@@ -1,0 +1,55 @@
+//____________________________________________________________
+// 2DPC - Numerical Simulation v3.0
+// J. B. Choi, J.P. Leonard, A.B. Limanov, J.S. Im
+// Program in Materials Science and Solid State Technology
+// Columbia University, New York, NY  10027
+//
+// COPYRIGHT(C) 1994-99. All Rights Reserved.
+//
+// Aluminum material file
+//____________________________________________________________
+MATERIAL_CLASS_NAME	WORD	"Aluminum"
+
+//________ Liquid Aluminum ____________________
+PHASE 	BEGIN
+PHASE_NAME		WORD	"Liquid"
+TRANSITION_TEMP	INT	933	//during solidification [K]
+TRANSITION_TO		WORD 	"Crystal"
+HEAT_CAPACITY 		FLOAT	3.1748   //[J/(cm3 K)], Handbook of heat transfer
+//HEAT_CAPACITY 	FLOAT	2.916   //[J/(cm3 K)], Smithells Metals Reference Book
+//THERMAL_CONDUCTIVITY  FLOAT	 			# [W/(cm K)]
+THERMAL_CONDUCTIVITY	RPN	"T 3.52505E-5 * 0.06191 +"  //[W/(cm K)]
+INDEX_N			FLOAT 	0.37	//#308nm (PRB V47, 11780)
+INDEX_K			FLOAT	3.4153	//#308nm (PRBv47, 11780)
+EMISSIVITY 		FLOAT	0.08	// #308nm (PRBv47, 11780)
+PHASE	END
+
+//_________ Crystal Aluminum ________________
+PHASE	BEGIN
+PHASE_NAME		WORD	"Crystal"
+TRANSITION_TEMP 	INT	933	//equilibrium temperature must be integer
+TRANSITION_TO		WORD	"Liquid"
+ENTHALPY		INT	1050	//[J/cm3]
+//ENTHALPY		RPN	""//Aluminum
+HEAT_CAPACITY		RPN	"T 3 ^ 3.93E-9 * T 2 ^ 6.37E-6 * - 0.0045 T * + 1.546165 +  2000 T - U *  T 2000 - U 3.1748 * + " // [J/(cm3K)]
+//HEAT_CAPACITY		POLYNOMIAL	"3 1.546165 0.00451 -0.00000637 0.00000000393" //  [J/(cm3K)]
+//HEAT_CAPACITY		POLYNOMIAL	"1 1.98 0.00144" //  [J/(cm3K)]
+//INTERFACE_RESPONSE 	RPN 	100 	//linear [m/sec]
+INTERFACE_RESPONSE	RPN 	"-5121.71 T / EXP -7.72805E4 * -3724.89 T / EXP 1.73011E4 * + // IRF_Alfitting
+THERMAL_CONDUCTIVITY	RPN	"T 3 ^ 1.9553E-9 * T 2 ^ 4.33393E-6 * - T 0.0025 *  + 1.96168 +  2000 T - U *  T 2000 - U 2.10957025 * +"  // [W/(cm K)]
+//THERMAL_CONDUCTIVITY	POLYNOMIAL	"3 1.96168 0.0025 -0.00000433393 0.0000000019553"  // [W/(cm K)]
+//INDEX_N		FLOAT 	0.407	// 365nm, SOPRA Data
+//INDEX_K		FLOAT	4.434	// 365nm, SOPRA Data
+//INDEX_N			FLOAT 	0.294	// 309.9nm, Handbook of optical const. of solids, E. D. Palik
+//INDEX_K			FLOAT	3.740	// 309.9nm, Handbook of optical const. of solids, E. D. Palik
+INDEX_N		FLOAT 	1.5192	// 1000nm, refractiveindex.info Data
+INDEX_K		FLOAT	9.2643	// 1000nm, refractiveindex.info Data
+NUCLEATION_HET		RPN 	"7.5737E30 -3.2494E8 933.2 T - 2 ^ T * / -12632.2 T / + EXP * T SQRT * 933 T - U  *" // THETA=70.53 SIG=0.108
+//NUCLEATION_HOM	RPN 	"4.38249E40 - 1.54458E10 933.2 T - 2 ^ T * / -12632.2 T / + EXP * T SQRT * 933 T - U *"// SIG=0.108
+EMISSIVITY 		FLOAT	0.0727  	// Smithells metals reference book 
+//EMISSIVITY 		POLYNOMIAL	"1 0.01604 0.0000713145"  // Smithells metals reference book 	
+PHASE 	END
+
+
+
+
